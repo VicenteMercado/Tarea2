@@ -61,12 +61,13 @@ int main(){
     Map* productosPorTipo = createMap(is_equal_int); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
+    Map* ListaCarritos = createMap(is_equal_string); //Lista global de carritos.
     Map* ListaGlobalProductos = createMap(is_equal_string); //TAL VEZ ESTA NO SEA NECESARIA
 
     char nombreProducto;
     char nombreMarca;
-    char stock; //Cantidad disponible de un producto.
-    char cantidadCompra; //Cantidad a comprar de un producto.
+    int stock; //Cantidad disponible de un producto.
+    int cantidadCompra; //Cantidad a comprar de un producto.
     int precio;
     int tipo; //SUJETA A CAMBIOS.
     char carrito;
