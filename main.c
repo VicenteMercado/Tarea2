@@ -73,6 +73,8 @@ int main(){
     int tipo; //SUJETA A CAMBIOS.
     char carrito;
 
+    printf("Hola");
+
 
     return 0;
 }
