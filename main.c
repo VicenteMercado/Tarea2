@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Map.h"
+#include "list.h"
 
 /*
   función para comparar claves de tipo string
