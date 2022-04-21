@@ -100,7 +100,7 @@ void exportarProductos(char* nombreArchivo)
 
 }
 
-void agregarProducto(nomProd, nomMarca, nomTipo, cantDisp, precio){
+void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio){
 
 }
 
@@ -109,15 +109,15 @@ void importarProductos(char* nombreArchivo)
 
 }
 
-void muestraProductosTipo(nomTipo){
+void muestraProductosTipo(char* nomTipo){
 
 }
 
-void agregaProductoCarrito(nomProd, cant, nomCarrito){
+void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
 
 }
 
-void concretarCompra(nomCarrito){
+void concretarCompra(char* nomCarrito){
 
 }
 
