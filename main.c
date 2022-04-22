@@ -8,7 +8,7 @@ typedef struct
 {
   char* nombre;
   char* marca;
-  char* tipo;
+  char tipo[50];
   int stock;
   int precio;
 } tipoProducto;
@@ -100,13 +100,28 @@ void exportarProductos(char* nombreArchivo)
 
 }
 
-void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio){
+void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio, Map* prodPorNombre, Map* prodPorTipo, Map* prodPorMarca)
+{
+  tipoProducto* productoNuevo = (tipoProducto *) malloc (sizeof(tipoProducto));
 
+  strcpy(productoNuevo->nombre, nomProd);
+  strcpy(productoNuevo->marca, nomMarca);
+  strcpy(productoNuevo->tipo, nomTipo);
+  productoNuevo->stock = cantDisp;
+  productoNuevo->precio = precio;
+
+  insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
 }
 
 void importarProductos(char* nombreArchivo)
 {
-
+  FILE *archivoProductos = fopen(nombreArchivo, "rt");
+  if (archivoProductos == NULL)
+  {
+    //Si no se haya el archivo, se avisa al usuario y se regresa al menú.    
+    printf("\nArchivo no encontrado!\n");
+    return;
+  }
 }
 
 void muestraProductosTipo(char* nomTipo){
@@ -125,17 +140,21 @@ void concretarCompra(char* nomCarrito){
 
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
+    setSortFunction(productosPorNombre, lower_than_string);
     Map* productosPorTipo = createMap(is_equal_int); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
-    Map* ListaCarritos = createMap(is_equal_string); //Lista global de carritos.
-    Map* ListaGlobalProductos = createMap(is_equal_string); //TAL VEZ ESTA NO SEA NECESARIA
+    setSortFunction(productosPorMarca, lower_than_string);
+    List* listaCarritos = createList(); //Lista global de carritos.
+    //List* listaGlobalProductos = createList(); //TAL VEZ ESTA NO SEA NECESARIA
 
-    char *nombreProducto, *nombreMarca, *tipo;
+    char *nombreProducto = (char*) malloc (100*sizeof(char));
+    char *nombreMarca = (char*) malloc (100*sizeof(char));
+    char *tipo = (char*) malloc (100*sizeof(char));
     int stock; //Cantidad disponible de un producto.
     int cantidadCompra; //Cantidad a comprar de un producto.
     int precio;
-    char carrito;
+    char *carrito = (char*) malloc (100*sizeof(char));
     int option;
 
     while (option != 0)
@@ -164,7 +183,21 @@ int main(){
                    break;
            case 2: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
-           case 3: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 3: printf("Ingrese el nombre del producto: ");
+                   getchar();
+                   scanf("%100[^\n]s", nombreProducto);
+                   getchar();
+                   printf("Ingrese la marca del producto: ");
+                   scanf("%100[^\n]s", nombreMarca);
+                   getchar();
+                   printf("Indique el tipo del producto: ");
+                   scanf("%100[^\n]s", tipo);
+                   getchar();
+                   printf("Ingrese el stock del producto indicado: ");
+                   scanf("%d", &stock);
+                   printf("Indique el precio del producto: ");
+                   scanf("%d", &precio);
+                   agregarProducto(nombreProducto, nombreMarca, tipo, stock, precio, productosPorNombre, productosPorTipo, productosPorMarca);
                    break;
            case 4: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
