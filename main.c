@@ -115,6 +115,21 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   productoNuevo->stock = cantDisp;
   productoNuevo->precio = precio;
 
+  tipoProducto* busquedaNombre = firstMap(prodPorNombre);
+  while (busquedaNombre)
+  {
+    if (busquedaNombre == productoNuevo) //Que ya esté en el nombre, significa que ya va a estar en los demás
+    {
+      busquedaNombre->stock+=cantDisp;
+      printf("Stock de %s actualizado", busquedaNombre->nombre);
+      return;
+    }
+    else
+    {
+      busquedaNombre = nextMap(prodPorNombre);
+    }
+  }
+
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
 }
 
