@@ -20,11 +20,11 @@ typedef struct
   int cantidad;
 } tipoLista;
 
-typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
+/*typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
   tipoLista* listaDeCarrito;
   char nombreCarrito[100];
 
-} tipoCarrito;
+} tipoCarrito;*/
 
 /*
   función para comparar claves de tipo string
@@ -163,7 +163,7 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
 
 void concretarCompra(char *nomCarrito, List* listaCarritos){ //FUNCIÓN INCOMPLETA.
 
-  List* carrito = firstList(listaCarritos); //Comienza busqueda del carrito nomCarrito.
+  tipoLista* carrito = firstList(listaCarritos); //Comienza busqueda del carrito nomCarrito.
 
   //Si no hay ningún carrito, se imprime este mensaje en pantalla y finaliza la función.
   if (!firstList(listaCarritos))
