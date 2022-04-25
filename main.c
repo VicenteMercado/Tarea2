@@ -17,7 +17,6 @@ typedef struct
 {
   List* lista;
   char nombre[100];
-  int cantidad;
 } tipoLista;
 
 /*typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
@@ -162,7 +161,7 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
 
 }
 
-void concretarCompra(char *nomCarrito, List* listaCarritos){ //FUNCIÓN INCOMPLETA.
+void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNombre, Map* productosPorTipo, Map* productosPorMarca){ //FUNCIÓN INCOMPLETA.
 
   tipoLista* carrito = firstList(listaCarritos); //Comienza busqueda del carrito nomCarrito.
 
@@ -189,6 +188,36 @@ void concretarCompra(char *nomCarrito, List* listaCarritos){ //FUNCIÓN INCOMPLE
     printf("No existe el carrito de dicho nombre!\n\n");
     return;
   }
+
+  //Comienza procesamiento de carrito.
+
+  int totalPago = 0; //Variable que almacena el total a pagar por carrito.
+  tipoProducto* prod = firstMap(productosPorNombre); //Ayudará a recorrer los productos del carrito.
+
+  while(prod != NULL){ //Se van sumando los precios de todos los productos.
+    totalPago += prod->precio;
+    prod = nextMap(productosPorNombre);
+  }
+
+  printf("El precio total por su carrito es: %d pesos.\n\n", totalPago); //Se imprime cantidad total.
+
+  prod = firstMap(productosPorNombre); //prod se devuelve a la primera posición, esta vez para conseguir los nombres
+                                       // y precios de cada producto.
+
+  while(prod != NULL){ //Se imprimen productos uno por uno.
+    printf("%s - $%d\n", prod->nombre, prod->precio);
+    prod = nextMap(productosPorNombre);
+  }
+
+  //FALTA PROCESAR ELIMINACIÓN DE STOCK Y ELIMINAR CARRITO!!!
+
+  tipoProducto* busquedaNombre = firstMap(productosPorNombre); 
+  //tipoProducto* busquedaTipo = 
+  //tipoProducto* busquedaMarca =
+
+
+
+
 
 
 
