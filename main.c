@@ -6,9 +6,9 @@
 
 typedef struct
 {
-  char* nombre;
-  char* marca;
-  char tipo[50];
+  char nombre[100];
+  char marca[100];
+  char tipo[100];
   int stock;
   int precio;
 } tipoProducto;
@@ -16,7 +16,7 @@ typedef struct
 typedef struct
 {
   List* lista;
-  char* nombre;
+  char nombre[100];
   int cantidad;
 } tipoLista;
 
@@ -122,6 +122,29 @@ void importarProductos(char* nombreArchivo)
     printf("\nArchivo no encontrado!\n");
     return;
   }
+  printf("Su archivo se ha abierto correctamente!\n");
+
+  char linea[1024];
+  int i;
+  int k = 0;
+
+  while (fgets(linea, 1023, archivoProductos) != NULL)
+    {
+        for (i = 0; i < 1; i++)
+        {
+                char *nombre = get_csv_field(linea, i);
+                char *marca = get_csv_field(linea, i+1);
+                char *tipo = get_csv_field(linea, i+2);
+                char* stock = get_csv_field(linea, i+3);
+                int stockAEntero = atoi(stock);
+                char* precio = get_csv_field(linea, i+4);
+                int precioAEntero = atoi(stock);
+        }
+        k++;
+    }
+
+
+  fclose(archivoProductos);
 }
 
 void muestraProductosTipo(char* nomTipo){
@@ -140,21 +163,20 @@ void concretarCompra(char* nomCarrito){
 
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
-    setSortFunction(productosPorNombre, lower_than_string);
     Map* productosPorTipo = createMap(is_equal_int); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
-    setSortFunction(productosPorMarca, lower_than_string);
     List* listaCarritos = createList(); //Lista global de carritos.
     //List* listaGlobalProductos = createList(); //TAL VEZ ESTA NO SEA NECESARIA
 
     char *nombreProducto = (char*) malloc (100*sizeof(char));
     char *nombreMarca = (char*) malloc (100*sizeof(char));
     char *tipo = (char*) malloc (100*sizeof(char));
+    char *carrito = (char*) malloc (100*sizeof(char));
+    char *nombreArchivo = (char*) malloc (100*sizeof(char));
     int stock; //Cantidad disponible de un producto.
     int cantidadCompra; //Cantidad a comprar de un producto.
     int precio;
-    char *carrito = (char*) malloc (100*sizeof(char));
     int option;
 
     while (option != 0)
@@ -179,7 +201,11 @@ int main(){
 
         switch(option)
         {
-           case 1: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 1: getchar();
+                   printf("Ingrese el nombre del archivo: ");
+                   scanf("%100[^\n]s", nombreArchivo);
+                   getchar();
+                   importarProductos(nombreArchivo);
                    break;
            case 2: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
