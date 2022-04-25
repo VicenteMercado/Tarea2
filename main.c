@@ -119,7 +119,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
 }
 
-void importarProductos(char* nombreArchivo)
+void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
 {
   FILE *archivoProductos = fopen(nombreArchivo, "rt");
   if (archivoProductos == NULL)
@@ -145,6 +145,7 @@ void importarProductos(char* nombreArchivo)
                 int stockAEntero = atoi(stock);
                 char* precio = get_csv_field(linea, i+4);
                 int precioAEntero = atoi(stock);
+                agregarProducto(nombre, marca, tipo, stockAEntero, precioAEntero, prodPorNombre, prodPorMarca, prodPorTipo);
         }
         k++;
     }
@@ -239,7 +240,7 @@ int main(){
                    printf("Ingrese el nombre del archivo: ");
                    scanf("%100[^\n]s", nombreArchivo);
                    getchar();
-                   importarProductos(nombreArchivo);
+                   importarProductos(nombreArchivo, productosPorNombre, productosPorMarca, productosPorTipo);
                    break;
            case 2: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
