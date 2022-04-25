@@ -155,7 +155,35 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
 
 }
 
-void concretarCompra(char* nomCarrito){
+void concretarCompra(char *nomCarrito, List* listaCarritos){ //FUNCIÓN INCOMPLETA.
+
+  List* carrito = firstList(listaCarritos); //Comienza busqueda del carrito nomCarrito.
+
+  //Si no hay ningún carrito, se imprime este mensaje en pantalla y finaliza la función.
+  if (!firstList(listaCarritos))
+  {
+    printf("No existen carritos, por favor crear uno como mínimo\n\n");
+    return;
+  }
+
+  while (carrito != NULL)
+  {
+    if (strcmp(carrito->nombre, nomCarrito) == 0)
+    {
+        break; //Si los nombres son iguales, se proceden a mostrar los datos del carrito.
+    }
+    else
+    {
+       carrito = nextList(listaCarritos); //si no, se avanza a la siguiente posición
+    }
+  }
+
+  if (carrito == NULL){ //Si no se encontró el carrito nomCarrito, se imprime un mensaje referente y se devuelve al menú.
+    printf("No existe el carrito de dicho nombre!\n\n");
+    return;
+  }
+
+
 
 }
 
