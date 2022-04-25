@@ -20,6 +20,12 @@ typedef struct
   int cantidad;
 } tipoLista;
 
+typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
+  tipoLista* listaDeCarrito;
+  char nombreCarrito[100];
+
+} tipoCarrito;
+
 /*
   función para comparar claves de tipo string
   retorna 1 si son iguales
