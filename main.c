@@ -116,21 +116,70 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   productoNuevo->precio = precio;
 
   tipoProducto* busquedaNombre = firstMap(prodPorNombre);
+  tipoLista* busquedaMarca = firstMap(prodPorMarca);
+  tipoProducto* busquedaListaMarca;
+  tipoProducto* busquedaListaTipo;
+  tipoLista* busquedaTipo = firstMap(prodPorTipo);
+
   while (busquedaNombre)
   {
-    if (busquedaNombre == productoNuevo) //Que ya esté en el nombre, significa que ya va a estar en los demás
-    {
-      busquedaNombre->stock+=cantDisp;
-      printf("Stock de %s actualizado", busquedaNombre->nombre);
-      return;
-    }
+    if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0) //Que ya esté en el nombre, significa que ya va a estar en los demás
+      break;
     else
-    {
       busquedaNombre = nextMap(prodPorNombre);
-    }
   }
 
-  insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
+  while (busquedaMarca)
+  {
+    if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0)
+    {
+      while (busquedaListaMarca != NULL)
+      {
+        busquedaListaMarca = firstList(busquedaMarca->lista);
+        if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
+          break;
+        else
+          busquedaListaMarca = nextList(busquedaMarca->lista);
+      }
+    }
+    else
+      busquedaMarca = nextMap(prodPorMarca);
+  }
+
+  while (busquedaTipo)
+  {
+    if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
+    {
+      busquedaListaTipo = firstList(busquedaTipo->lista);
+      while (busquedaListaTipo != NULL)
+      {
+        if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
+          break;
+        else
+          busquedaListaTipo = nextList(busquedaTipo->lista);
+      }
+    }
+    else
+      busquedaTipo = nextMap(prodPorTipo);
+  }
+
+  if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0 
+      && strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
+  {
+    busquedaNombre->stock += cantDisp;
+    if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
+    {
+      busquedaListaMarca->stock += cantDisp;
+      busquedaListaTipo->stock += cantDisp;
+    }
+    printf("Stock de %s actualizado\n", busquedaNombre->nombre);
+    return;
+  }
+  else
+  {
+    insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
+    printf("Se inserta en el mapa nombre\n");
+  }
 }
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
@@ -159,12 +208,12 @@ void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarc
                 int stockAEntero = atoi(stock);
                 char* precio = get_csv_field(linea, i+4);
                 int precioAEntero = atoi(stock);
-                agregarProducto(nombre, marca, tipo, stockAEntero, precioAEntero, prodPorNombre, prodPorMarca, prodPorTipo);
+                agregarProducto(nombre, marca, tipo, stockAEntero, precioAEntero, prodPorNombre, prodPorTipo, prodPorMarca);
         }
         k++;
     }
 
-
+  printf("Todos los datos han sido copiados o el stock ha sido modificado\n");
   fclose(archivoProductos);
 }
 
