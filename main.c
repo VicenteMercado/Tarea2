@@ -133,9 +133,9 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   {
     if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0)
     {
+      busquedaListaMarca = firstList(busquedaMarca->lista);
       while (busquedaListaMarca != NULL)
       {
-        busquedaListaMarca = firstList(busquedaMarca->lista);
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
           break;
         else
@@ -175,11 +175,9 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     printf("Stock de %s actualizado\n", busquedaNombre->nombre);
     return;
   }
-  else
-  {
-    insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
-    printf("Se inserta en el mapa nombre\n");
-  }
+
+  insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
+  printf("Se inserta en el mapa nombre\n");
 }
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
