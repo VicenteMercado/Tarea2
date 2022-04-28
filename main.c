@@ -261,6 +261,14 @@ void muestraProductosTipo(char* nomTipo){
 
 }
 
+void muestraTodosProductos(){
+
+}
+
+void eliminarProdCarrito(char* nomCarrito){
+  
+}
+
 void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
 
 }
