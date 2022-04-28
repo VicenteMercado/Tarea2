@@ -390,8 +390,21 @@ int main(){
                    break;
            case 7: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
-           case 8: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 8: getchar();
+                   printf("Ingrese el nombre de el carrito\n");
+                   scanf("%100[^\n]s", carrito);
+                   while(1)
+                   {
+                      printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
+                      getchar();
+                      scanf("%100[^\n]s", nombreProducto);
+                      if(nombreProducto == '0') break;
+                      printf("Ingrese la cantidad que desea de %s", nombreProducto);
+                      getchar();
+                      scanf("%d", &cantidadCompra);
+                   }
                    break;
+                   
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
            case 10: printf("FUNCION NO IMPLEMENTADA!\n");
