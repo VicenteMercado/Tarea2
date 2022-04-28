@@ -272,7 +272,7 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   //Si no hay ningún carrito, se imprime este mensaje en pantalla y finaliza la función.
   if (!firstList(listaCarritos))
   {
-    printf("No existen carritos, por favor crear uno como mínimo\n\n");
+    printf("\nNo existen carritos, por favor crear uno como minimo\n\n");
     return;
   }
 
@@ -430,6 +430,7 @@ int main(){
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
            case 10: printf("Por favor, ingrese el nombre de su carrito: ");
+                    getchar();
                     scanf("%100[^\n]s", carrito);
                     concretarCompra(carrito,listaCarritos,productosPorNombre,productosPorTipo,productosPorMarca);
                     break;
