@@ -102,8 +102,8 @@ char *get_csv_field (char * tmp, int k) {
 
 void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
 {
-  FILE *archivoCanciones = fopen(nombreArchivo, "wt");
-  if (archivoCanciones == NULL)
+  FILE *archivoProductos = fopen(nombreArchivo, "wt");
+  if (archivoProductos == NULL)
     {
       return;
     }
@@ -112,17 +112,17 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
   while(producto != NULL)
   {
     //nombre maarca tipo precio
-      fputs(producto->nombre, archivoCanciones);
-      fputc(',', archivoCanciones);
-      fputs(producto->marca, archivoCanciones);
-      fputc(',', archivoCanciones);
-      fputs(producto->tipo, archivoCanciones);
-      fputc(',', archivoCanciones);
-      fprintf(archivoCanciones, "%d", producto->precio);
-      fputc('\n', archivoCanciones);
+      fputs(producto->nombre, archivoProductos);
+      fputc(',', archivoProductos);
+      fputs(producto->marca, archivoProductos);
+      fputc(',', archivoProductos);
+      fputs(producto->tipo, archivoProductos);
+      fputc(',', archivoProductos);
+      fprintf(archivoProductos, "%d", producto->precio);
+      fputc('\n', archivoProductos);
       producto=nextMap(mapa_nombres);
   }  
-  fclose(archivoCanciones);
+  fclose(archivoProductos);
 
 }
 
