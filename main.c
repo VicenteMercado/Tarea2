@@ -100,10 +100,32 @@ char *get_csv_field (char * tmp, int k) {
     return NULL;
 }
 
-void exportarProductos(char* nombreArchivo)
+void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
 {
+  FILE *archivoCanciones = fopen(nombreArchivo, "wt");
+  if (archivoCanciones == NULL)
+    {
+      return;
+    }
+  tipoProducto* producto;
+  producto = firstMap(mapa_nombres);
+  while(producto != NULL)
+  {
+    //nombre maarca tipo precio
+      fputs(producto->nombre, nombreArchivo);
+      fputc(',', nombreArchivo);
+      fputs(producto->marca, nombreArchivo);
+      fputc(',', nombreArchivo);
+      fputs(producto->tipo, nombreArchivo);
+      fputc(',', nombreArchivo);
+      fprintf(nombreArchivo, "%d", producto->precio);
+      fputc('\n', nombreArchivo);
+      archivoCanciones=nextMap(mapa_nombres);
+  }  
+  fclose(archivoCanciones);
 
 }
+
 
 void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio, Map* prodPorNombre, Map* prodPorTipo, Map* prodPorMarca)
 {
@@ -163,7 +185,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaTipo = nextMap(prodPorTipo);
   }
 
-  if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0 
+  /*if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0 
       && strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
   {
     busquedaNombre->stock += cantDisp;
@@ -174,7 +196,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     }
     printf("Stock de %s actualizado\n", busquedaNombre->nombre);
     return;
-  }
+  }*/
 
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
   printf("Se inserta en el mapa nombre\n");
@@ -333,7 +355,10 @@ int main(){
                    getchar();
                    importarProductos(nombreArchivo, productosPorNombre, productosPorMarca, productosPorTipo);
                    break;
-           case 2: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 2: printf("Ingrese el nombre del archivo al que desea exportar los productos\n");
+                   scanf("%100[^\n]s", nombreArchivo);
+                   getchar();
+                   exportarProductos(nombreArchivo, productosPorNombre);
                    break;
            case 3: printf("Ingrese el nombre del producto: ");
                    getchar();
