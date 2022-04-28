@@ -17,6 +17,7 @@ typedef struct
 {
   List* lista;
   char nombre[100];
+  int cantidadElementos;
 } tipoLista;
 
 /*typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
@@ -117,6 +118,8 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
       fputc(',', archivoProductos);
       fputs(producto->tipo, archivoProductos);
       fputc(',', archivoProductos);
+      fprintf(archivoProductos, "%d", producto->stock);
+      fputc(',', archivoProductos);
       fprintf(archivoProductos, "%d", producto->precio);
       fputc('\n', archivoProductos);
       producto=nextMap(mapa_nombres);
@@ -153,34 +156,34 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaNombre = nextMap(prodPorNombre);
   }
 
-  while (busquedaMarca)
+  while (busquedaMarca != NULL)
   {
     if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0)
     {
+      printf("entro marca\n");
       busquedaListaMarca = firstList(busquedaMarca->lista);
       while (busquedaListaMarca != NULL)
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
         {
+          printf("encontro la marca\n");
           busquedaListaMarca->stock += cantDisp;
           break;
         }
-        else
-          busquedaListaMarca = nextList(busquedaMarca->lista);
+        busquedaListaMarca = nextList(busquedaMarca->lista);
       }
     }
-    else
-      busquedaMarca = nextMap(prodPorMarca);
+    busquedaMarca = nextMap(prodPorMarca);
   }
 
-  if (!busquedaMarca) printf("NO EXISTE MARCA\n");
 
-  if (!busquedaMarca)
+  if (busquedaMarca == NULL)
   {
     tipoLista* nuevaMarca = (tipoLista *) malloc (sizeof(tipoLista));
     nuevaMarca->lista = createList();
-    strcpy(nuevaMarca->nombre, nomTipo);
-    insertMap(prodPorTipo, nuevaMarca->nombre, nuevaMarca);
+    strcpy(nuevaMarca->nombre, nomMarca);
+    insertMap(prodPorMarca, nuevaMarca->nombre, nuevaMarca);
+    printf("entra al if marca\n");
   }
 
   while (busquedaTipo)
@@ -192,18 +195,15 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
+          printf("encontro el tipo\n");
           busquedaListaTipo->stock += cantDisp;
           break;
         }
-        else
-          busquedaListaTipo = nextList(busquedaTipo->lista);
+        busquedaListaTipo = nextList(busquedaTipo->lista);
       }
     }
-    else
-      busquedaTipo = nextMap(prodPorTipo);
+    busquedaTipo = nextMap(prodPorTipo);
   }
-
-  if (!busquedaTipo) printf("NO EXISTE TIPO\n");
 
   if (!busquedaTipo)
   {
@@ -434,7 +434,6 @@ int main(){
                       scanf("%d", &cantidadCompra);
                    }
                    break;
-                   
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
            case 10: printf("Por favor, ingrese el nombre de su carrito: ");
