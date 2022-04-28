@@ -360,7 +360,8 @@ int main(){
                    getchar();
                    importarProductos(nombreArchivo, productosPorNombre, productosPorMarca, productosPorTipo);
                    break;
-           case 2: printf("Ingrese el nombre del archivo al que desea exportar los productos\n");
+           case 2: getchar();
+                   printf("Ingrese el nombre del archivo al que desea exportar los productos\n");
                    scanf("%100[^\n]s", nombreArchivo);
                    getchar();
                    exportarProductos(nombreArchivo, productosPorNombre);
