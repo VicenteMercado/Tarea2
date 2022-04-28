@@ -112,15 +112,15 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
   while(producto != NULL)
   {
     //nombre maarca tipo precio
-      fputs(producto->nombre, nombreArchivo);
-      fputc(',', nombreArchivo);
-      fputs(producto->marca, nombreArchivo);
-      fputc(',', nombreArchivo);
-      fputs(producto->tipo, nombreArchivo);
-      fputc(',', nombreArchivo);
-      fprintf(nombreArchivo, "%d", producto->precio);
-      fputc('\n', nombreArchivo);
-      archivoCanciones=nextMap(mapa_nombres);
+      fputs(producto->nombre, archivoCanciones);
+      fputc(',', archivoCanciones);
+      fputs(producto->marca, archivoCanciones);
+      fputc(',', archivoCanciones);
+      fputs(producto->tipo, archivoCanciones);
+      fputc(',', archivoCanciones);
+      fprintf(archivoCanciones, "%d", producto->precio);
+      fputc('\n', archivoCanciones);
+      producto=nextMap(mapa_nombres);
   }  
   fclose(archivoCanciones);
 
@@ -146,7 +146,10 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   while (busquedaNombre)
   {
     if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0) //Que ya esté en el nombre, significa que ya va a estar en los demás
+    {
+      busquedaNombre->stock += cantDisp;
       break;
+    }
     else
       busquedaNombre = nextMap(prodPorNombre);
   }
@@ -159,7 +162,10 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       while (busquedaListaMarca != NULL)
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
+        {
+          busquedaListaMarca->stock += cantDisp;
           break;
+        }
         else
           busquedaListaMarca = nextList(busquedaMarca->lista);
       }
@@ -176,7 +182,10 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       while (busquedaListaTipo != NULL)
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
+        {
+          busquedaListaTipo->stock += cantDisp;
           break;
+        }
         else
           busquedaListaTipo = nextList(busquedaTipo->lista);
       }
@@ -185,21 +194,17 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaTipo = nextMap(prodPorTipo);
   }
 
-  /*if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0 
-      && strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
+  printf("busquedanombre = %s\n", busquedaNombre->nombre);
+
+  if (busquedaNombre && strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0)
   {
-    busquedaNombre->stock += cantDisp;
-    if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0 && strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
-    {
-      busquedaListaMarca->stock += cantDisp;
-      busquedaListaTipo->stock += cantDisp;
-    }
     printf("Stock de %s actualizado\n", busquedaNombre->nombre);
     return;
-  }*/
+  }
+
+  printf("Antes de insertar en el mapa nombre\n");
 
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
-  printf("Se inserta en el mapa nombre\n");
 }
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
@@ -311,7 +316,7 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
 
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
-    Map* productosPorTipo = createMap(is_equal_int); //Mapa de productos por tipo (Pensaba en dividir los tipos
+    Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
     List* listaCarritos = createList(); //Lista global de carritos.
