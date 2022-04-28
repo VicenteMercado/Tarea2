@@ -315,16 +315,23 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
 
   //FALTA PROCESAR ELIMINACIÓN DE STOCK Y ELIMINAR CARRITO!!!
 
-  tipoProducto* busquedaNombre = firstMap(productosPorNombre); 
-  //tipoProducto* busquedaTipo = 
-  //tipoProducto* busquedaMarca =
+  tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
+  while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
+      busquedaNombre->stock--;
+      busquedaNombre = nextMap(productosPorNombre);
+  }
 
+  tipoLista* posCarrito = firstList(listaCarritos); //Variable para la posición del carrito en la lista
 
+  while(posCarrito != NULL){  //Se recupera la posición del carrito
+    if(strcmp(posCarrito->nombre, carrito->nombre)==0) break;
+    else{
+      posCarrito = nextList(listaCarritos);
+    }
+  }
 
-
-
-
+  popCurrent(listaCarritos); //Se elimina el carrito.
 }
 
 
@@ -422,7 +429,9 @@ int main(){
                    
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
-           case 10: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 10: printf("Por favor, ingrese el nombre de su carrito: ");
+                    scanf("%100[^\n]s", carrito);
+                    concretarCompra(carrito,listaCarritos,productosPorNombre,productosPorTipo,productosPorMarca);
                     break;
            case 11: printf("FUNCION NO IMPLEMENTADA!\n");
                     break;
