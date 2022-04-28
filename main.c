@@ -111,7 +111,6 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
   producto = firstMap(mapa_nombres);
   while(producto != NULL)
   {
-    //nombre maarca tipo precio
       fputs(producto->nombre, archivoProductos);
       fputc(',', archivoProductos);
       fputs(producto->marca, archivoProductos);
@@ -174,6 +173,16 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaMarca = nextMap(prodPorMarca);
   }
 
+  if (!busquedaMarca) printf("NO EXISTE MARCA\n");
+
+  if (!busquedaMarca)
+  {
+    tipoLista* nuevaMarca = (tipoLista *) malloc (sizeof(tipoLista));
+    nuevaMarca->lista = createList();
+    strcpy(nuevaMarca->nombre, nomTipo);
+    insertMap(prodPorTipo, nuevaMarca->nombre, nuevaMarca);
+  }
+
   while (busquedaTipo)
   {
     if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
@@ -194,15 +203,21 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaTipo = nextMap(prodPorTipo);
   }
 
-  printf("busquedanombre = %s\n", busquedaNombre->nombre);
+  if (!busquedaTipo) printf("NO EXISTE TIPO\n");
+
+  if (!busquedaTipo)
+  {
+    tipoLista* nuevoTipo = (tipoLista *) malloc (sizeof(tipoLista));
+    nuevoTipo->lista = createList();
+    strcpy(nuevoTipo->nombre, nomTipo);
+    insertMap(prodPorTipo, nuevoTipo->nombre, nuevoTipo);
+  }
 
   if (busquedaNombre && strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0)
   {
     printf("Stock de %s actualizado\n", busquedaNombre->nombre);
     return;
   }
-
-  printf("Antes de insertar en el mapa nombre\n");
 
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
 }
@@ -398,7 +413,7 @@ int main(){
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
                       getchar();
                       scanf("%100[^\n]s", nombreProducto);
-                      if(nombreProducto == '0') break;
+                      if(nombreProducto[0] == '0') break;
                       printf("Ingrese la cantidad que desea de %s", nombreProducto);
                       getchar();
                       scanf("%d", &cantidadCompra);
