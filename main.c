@@ -21,11 +21,6 @@ typedef struct
   int cantidadElementos;
 } tipoLista;
 
-typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
-  tipoLista* listaDeCarrito;
-  char nombreCarrito[100];
-} tipoCarrito;
-
 typedef struct{
   char nombre[100];
   int cantidad;
@@ -327,24 +322,16 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
 }
 
 void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos){
-    printf("AAAA");
-    /*if(listaCarritos == NULL)
-    {                                           //aca debo arreglar este if
-      listaCarritos = createList();
-    }*/
-    printf("oooooooooo");
-    //tipoCarrito* Carrito ;
+ 
     tipoProductoCarro*  producto =(tipoProductoCarro*) malloc (sizeof(tipoProductoCarro));
     strcpy(producto->nombre, nomProd);
     producto->cantidad= cant;
-    printf(" se copio a producto el nombre %s \n", producto->nombre);
-    printf(" se copio a producto la cantidad %s \n", producto->cantidad);
-
-    tipoCarrito* revisarCarrito = firstList(listaCarritos);
+    tipoLista* revisarCarrito = firstList(listaCarritos);
      while (revisarCarrito != NULL)
         {
-          if (strcmp(revisarCarrito->nombreCarrito, nomCarrito) == 0)
+          if (strcmp(revisarCarrito->nombre, nomCarrito) == 0)
           {
+            printf("el nombre del carro es %s\n", revisarCarrito->nombre );
                   break;
           }
           else
@@ -352,31 +339,28 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
                   revisarCarrito = nextList(listaCarritos);
           }
         }
-        printf("el nombre del carro es %s\n", revisarCarrito->nombreCarrito );
     if (revisarCarrito == NULL)
         {
-                revisarCarrito  = (tipoCarrito*) malloc(sizeof(tipoCarrito));
-                strcpy(revisarCarrito ->nombreCarrito, nomCarrito);
-                revisarCarrito->listaDeCarrito->cantidadElementos = 0; 
-                revisarCarrito->listaDeCarrito->lista  = createList();
-                pushBack(listaCarritos, revisarCarrito ); 
+                revisarCarrito  = (tipoLista*) malloc(sizeof(tipoLista));
+                strcpy(revisarCarrito ->nombre, nomCarrito);
+                revisarCarrito->cantidadElementos = 0;
+                revisarCarrito->lista  = createList();
+                pushBack(listaCarritos, revisarCarrito );
         }
-    if (!firstList(revisarCarrito->listaDeCarrito->lista))
+    if (!firstList(revisarCarrito->lista))
         {
-                pushFront(revisarCarrito->listaDeCarrito->lista, producto);
+                pushFront(revisarCarrito->lista, producto);
                 printf("Su producto ha sido agregado a su carrito de compra\n");
-                revisarCarrito->listaDeCarrito->cantidadElementos++;
+                revisarCarrito->cantidadElementos++;
                 return;
         }
     else
     {
-      pushBack(revisarCarrito->listaDeCarrito->lista, producto);
+      pushBack(revisarCarrito->lista, producto);
       printf("Su producto ha sido agregado a su carrito de compra\n");
-      revisarCarrito->listaDeCarrito->cantidadElementos++;
+      revisarCarrito->cantidadElementos++;
       return;
-    }
-    
-    
+    }  
 }
 
 void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNombre){ //FUNCIÓN FALTA DE TESTEO.
@@ -446,6 +430,27 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   popCurrent(listaCarritos); //Se elimina el carrito.
 }
 
+void mostrarCarritosCompra(List * listaCarritos)
+{
+  tipoLista* carrito = firstList(listaCarritos);
+   while(carrito != NULL)
+     {
+       int cant = 0;
+       printf("Nombre del carrito: %s\n", carrito->nombre);
+       tipoProductoCarro * producto = firstList(carrito->lista);
+       while(producto != NULL)
+       {
+           printf("%s", producto->nombre);
+           printf(" %d \n", producto->cantidad);
+           cant++;
+           producto = nextList(carrito->lista);
+       }
+       printf("La cantidad de productos que tiene el carrito %s es: %d\n", carrito->nombre, cant);
+       carrito=nextList(listaCarritos);
+     }            
+                       
+}
+
 
 
 int main(){
@@ -457,7 +462,6 @@ int main(){
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
     setSortFunction(productosPorMarca,lower_than_string);
     List* listaCarritos = createList(); //Lista global de carritos.
-    //List* listaGlobalProductos = createList(); //TAL VEZ ESTA NO SEA NECESARIA
 
     char *nombreProducto = (char*) malloc (100*sizeof(char));
     char *nombreMarca = (char*) malloc (100*sizeof(char));
@@ -531,17 +535,15 @@ int main(){
                    printf("Ingrese el nombre de el carrito\n");
                    scanf("%100[^\n]s", carrito);
                    printf("el carrito se llama %s \n", carrito);
-                   while(1)
+                   while(nombreProducto[0] != '0')
                    {
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
                       getchar();
                       scanf("%100[^\n]s", nombreProducto);
-                      printf("el producto ingresado es %s \n", nombreProducto);
                       if(nombreProducto[0] == '0') break;
                       printf("Ingrese la cantidad que desea de %s ", nombreProducto);
                       getchar();
                       scanf("%d", &cantidadCompra);
-                      printf("la cantidad que quiere es  %d \n", cantidadCompra);
                       agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos);
                    }
                    break;
@@ -550,9 +552,9 @@ int main(){
            case 10: printf("Por favor, ingrese el nombre de su carrito: ");
                     getchar();
                     scanf("%100[^\n]s", carrito);
-                    concretarCompra(carrito,productosPorNombre, listaCarritos);
+                    concretarCompra(carrito, listaCarritos, productosPorNombre);
                     break;
-           case 11: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 11: mostrarCarritosCompra(listaCarritos);
                     break;
            case 0: break;
         }
