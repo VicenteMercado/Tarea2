@@ -503,15 +503,18 @@ int main(){
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
                    scanf("%100[^\n]s", carrito);
+                   printf("el carrito se llama %s \n", carrito);
                    while(1)
                    {
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
                       getchar();
                       scanf("%100[^\n]s", nombreProducto);
+                      printf("el producto ingresado es %s \n", nombreProducto);
                       if(nombreProducto[0] == '0') break;
-                      printf("Ingrese la cantidad que desea de %s", nombreProducto);
+                      printf("Ingrese la cantidad que desea de %s ", nombreProducto);
                       getchar();
                       scanf("%d", &cantidadCompra);
+                      printf("la cantidad que quiere es  %d \n", cantidadCompra);
                       agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos);
                    }
                    break;
