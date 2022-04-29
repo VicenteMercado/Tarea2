@@ -304,15 +304,18 @@ void eliminarProdCarrito(char* nomCarrito){
 }
 
 void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos){
-
-    if(listaCarritos == NULL)
-    {
+    printf("AAAA");
+    /*if(listaCarritos == NULL)
+    {                                           //aca debo arreglar este if
       listaCarritos = createList();
-    }
+    }*/
+    printf("oooooooooo");
     //tipoCarrito* Carrito ;
-    tipoProductoCarro*  producto;
+    tipoProductoCarro*  producto =(tipoProductoCarro*) malloc (sizeof(tipoProductoCarro));
     strcpy(producto->nombre, nomProd);
     producto->cantidad= cant;
+    printf(" se copio a producto el nombre %s \n", producto->nombre);
+    printf(" se copio a producto la cantidad %s \n", producto->cantidad);
 
     tipoCarrito* revisarCarrito = firstList(listaCarritos);
      while (revisarCarrito != NULL)
@@ -326,6 +329,7 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
                   revisarCarrito = nextList(listaCarritos);
           }
         }
+        printf("el nombre del carro es %s\n", revisarCarrito->nombreCarrito );
     if (revisarCarrito == NULL)
         {
                 revisarCarrito  = (tipoCarrito*) malloc(sizeof(tipoCarrito));
