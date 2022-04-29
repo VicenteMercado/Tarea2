@@ -20,11 +20,16 @@ typedef struct
   int cantidadElementos;
 } tipoLista;
 
-/*typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
+typedef struct{ //FALTA AGREGAR MÁS PROPIEDADES
   tipoLista* listaDeCarrito;
   char nombreCarrito[100];
+} tipoCarrito;
 
-} tipoCarrito;*/
+typedef struct{
+  char nombre[100];
+  int cantidad;
+  char marca[100];
+} tipoProductoCarro;
 
 /*
   función para comparar claves de tipo string
@@ -281,8 +286,53 @@ void eliminarProdCarrito(char* nomCarrito){
   
 }
 
-void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito){
+void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos){
 
+    if(listaCarritos == NULL)
+    {
+      listaCarritos = createList();
+    }
+    //tipoCarrito* Carrito ;
+    tipoProductoCarro*  producto;
+    strcpy(producto->nombre, nomProd);
+    producto->cantidad= cant;
+
+    tipoCarrito* revisarCarrito = firstList(listaCarritos);
+     while (revisarCarrito != NULL)
+        {
+          if (strcmp(revisarCarrito->nombreCarrito, nomCarrito) == 0)
+          {
+                  break;
+          }
+          else
+          {
+                  revisarCarrito = nextList(listaCarritos);
+          }
+        }
+    if (revisarCarrito == NULL)
+        {
+                revisarCarrito  = (tipoCarrito*) malloc(sizeof(tipoCarrito));
+                strcpy(revisarCarrito ->nombreCarrito, nomCarrito);
+                revisarCarrito->listaDeCarrito->cantidadElementos = 0; 
+                revisarCarrito->listaDeCarrito->lista  = createList();
+                pushBack(listaCarritos, revisarCarrito ); 
+        }
+    if (!firstList(revisarCarrito->listaDeCarrito))
+        {
+                pushFront(revisarCarrito->listaDeCarrito, producto);
+                printf("Su producto ha sido agregado a su carrito de compra\n");
+                revisarCarrito->listaDeCarrito->cantidadElementos++;
+                return;
+        }
+    else
+    {
+      pushBack(revisarCarrito->listaDeCarrito, producto);
+      printf("Su producto ha sido agregado a su carrito de compra\n");
+      revisarCarrito->listaDeCarrito->cantidadElementos++;
+      return;
+    }
+    
+    
 }
 
 void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNombre, Map* productosPorTipo, Map* productosPorMarca){ //FUNCIÓN INCOMPLETA.
@@ -444,6 +494,7 @@ int main(){
                       printf("Ingrese la cantidad que desea de %s", nombreProducto);
                       getchar();
                       scanf("%d", &cantidadCompra);
+                      agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos);
                    }
                    break;
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
