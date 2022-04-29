@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "Map.h"
 #include "list.h"
 
@@ -138,6 +139,8 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
 {
   tipoProducto* productoNuevo = (tipoProducto *) malloc (sizeof(tipoProducto));
 
+  nomProd[0] = toupper(nomProd[0]);
+
   strcpy(productoNuevo->nombre, nomProd);
   strcpy(productoNuevo->marca, nomMarca);
   strcpy(productoNuevo->tipo, nomTipo);
@@ -160,8 +163,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaNombre->stock += cantDisp;
       break;
     }
-    else
-      busquedaNombre = nextMap(prodPorNombre);
+    busquedaNombre = nextMap(prodPorNombre);
   }
 
   while (busquedaMarca != NULL)
@@ -173,7 +175,6 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
         {
-          printf("encontro la marca\n");
           busquedaListaMarca->stock += cantDisp;
           break;
         }
@@ -191,7 +192,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     insertMap(prodPorMarca, nuevaMarca->nombre, nuevaMarca);
   }
 
-  while (busquedaTipo)
+  while (busquedaTipo != NULL)
   {
     if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
     {
@@ -200,7 +201,6 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
-          printf("encontro el tipo\n");
           busquedaListaTipo->stock += cantDisp;
           break;
         }
@@ -278,7 +278,24 @@ void muestraProductosTipo(char* nomTipo){
 
 }
 
-void muestraTodosProductos(){
+void muestraTodosProductos(Map* prodPorNombre){ //CASE 7
+  printf("\n"); //Se empieza con salto de línea para mejor distinción.
+  tipoProducto* prodActual = firstMap(prodPorNombre); //Ayudará a recorrer cada producto.
+
+  if(!prodActual){
+    printf("No hay productos existentes!\n\n");
+    return;
+  }
+  
+  while(prodActual != NULL){
+     printf("Nombre del producto: %s\n", prodActual->nombre); 
+     printf("Marca: %s\n", prodActual->marca);
+     printf("Tipo: %s\n", prodActual->tipo); 
+     printf("Stock: %d\n", prodActual->stock); 
+     printf("Precio: $%d\n", prodActual->precio); 
+
+     prodActual = nextMap(prodPorNombre);
+  }
 
 }
 
@@ -383,12 +400,10 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
     prod = nextMap(productosPorNombre);
   }
 
-  //FALTA PROCESAR ELIMINACIÓN DE STOCK Y ELIMINAR CARRITO!!!
-
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
   while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
-      busquedaNombre->stock--;
+      busquedaNombre->stock --; //FALTA CASO CUANDO CANT > 1
       busquedaNombre = nextMap(productosPorNombre);
   }
 
@@ -408,9 +423,12 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
 
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
+    setSortFunction(productosPorNombre,lower_than_string);
     Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
+    setSortFunction(productosPorTipo,lower_than_string);
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
+    setSortFunction(productosPorMarca,lower_than_string);
     List* listaCarritos = createList(); //Lista global de carritos.
     //List* listaGlobalProductos = createList(); //TAL VEZ ESTA NO SEA NECESARIA
 
@@ -480,7 +498,7 @@ int main(){
                    break;
            case 6: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
-           case 7: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 7: muestraTodosProductos(productosPorNombre);
                    break;
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
