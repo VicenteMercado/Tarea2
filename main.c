@@ -375,9 +375,12 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
 
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
+    setSortFunction(productosPorNombre,lower_than_string);
     Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo (Pensaba en dividir los tipos
                                                      //por números, no sé si se les ocurre algo más)
+    setSortFunction(productosPorTipo,lower_than_string);
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
+    setSortFunction(productosPorMarca,lower_than_string);
     List* listaCarritos = createList(); //Lista global de carritos.
     //List* listaGlobalProductos = createList(); //TAL VEZ ESTA NO SEA NECESARIA
 
