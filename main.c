@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "Map.h"
 #include "list.h"
 
@@ -233,6 +234,44 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
 
   printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
 }
+
+void BuscarTipo (char* nomTipo, Map* prodPorNombre)
+{
+  //marcador de si hay un producto encontrado 
+  bool prodEncontrado = false;
+  tipoProducto* producto = firstMap(prodPorNombre);
+  while (producto != NULL)
+  {
+    if (strcmp(nomTipo, producto->tipo) == 0)
+    {
+      //se encontró un producto de ese tipo
+      printf("%s\n", producto->nombre);
+      printf("%s\n", producto->marca);
+      printf("%s\n", producto->tipo);
+      printf("%d\n", producto->stock);
+      printf("%d\n", producto->precio);
+      prodEncontrado = true;
+    }
+    producto = nextMap(prodPorNombre);
+  }
+
+  //de no existir el tipo debe mostrar un mensaje por pantalla 
+  if (prodEncontrado == false)
+  {
+    printf("No existe este tipo de producto");
+  }
+}
+
+void BuscarMarca (char* nomMarca, Map* prodPorMarca)
+{
+  bool prodEncontrado = false;
+}
+
+void BuscarNombre (char* nomProd, Map* prodPornombre)
+{
+  bool prodEncontrado = false;
+}
+
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
 {
