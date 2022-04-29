@@ -158,8 +158,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       busquedaNombre->stock += cantDisp;
       break;
     }
-    else
-      busquedaNombre = nextMap(prodPorNombre);
+    busquedaNombre = nextMap(prodPorNombre);
   }
 
   while (busquedaMarca != NULL)
@@ -171,7 +170,6 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
         {
-          printf("encontro la marca\n");
           busquedaListaMarca->stock += cantDisp;
           break;
         }
@@ -189,7 +187,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     insertMap(prodPorMarca, nuevaMarca->nombre, nuevaMarca);
   }
 
-  while (busquedaTipo)
+  while (busquedaTipo != NULL)
   {
     if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
     {
@@ -198,7 +196,6 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
-          printf("encontro el tipo\n");
           busquedaListaTipo->stock += cantDisp;
           break;
         }
