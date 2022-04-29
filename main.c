@@ -273,7 +273,24 @@ void muestraProductosTipo(char* nomTipo){
 
 }
 
-void muestraTodosProductos(){
+void muestraTodosProductos(Map* prodPorNombre){ //CASE 7
+  printf("\n"); //Se empieza con salto de línea para mejor distinción.
+  tipoProducto* prodActual = firstMap(prodPorNombre); //Ayudará a recorrer cada producto.
+
+  if(!prodActual){
+    printf("No hay productos existentes!\n\n");
+    return;
+  }
+  
+  while(prodActual != NULL){
+     printf("Nombre del producto: %s\n", prodActual->nombre); 
+     printf("Marca: %s\n", prodActual->marca);
+     printf("Tipo: %s\n", prodActual->tipo); 
+     printf("Stock: %d\n", prodActual->stock); 
+     printf("Precio: $%d\n", prodActual->precio); 
+
+     prodActual = nextMap(prodPorNombre);
+  }
 
 }
 
@@ -338,7 +355,7 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
   while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
-      busquedaNombre->stock--;
+      busquedaNombre->stock --; //FALTA CASO CUANDO CANT > 1
       busquedaNombre = nextMap(productosPorNombre);
   }
 
@@ -430,7 +447,7 @@ int main(){
                    break;
            case 6: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
-           case 7: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 7: muestraTodosProductos(productosPorNombre);
                    break;
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
