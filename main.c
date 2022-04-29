@@ -151,7 +151,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   tipoProducto* busquedaListaTipo;
   tipoLista* busquedaTipo = firstMap(prodPorTipo);
 
-  while (busquedaNombre)
+  while (busquedaNombre != NULL)
   {
     if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0) //Que ya esté en el nombre, significa que ya va a estar en los demás
     {
@@ -170,7 +170,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
         {
-          busquedaListaMarca->stock += cantDisp;
+          //busquedaListaMarca->stock += cantDisp;
           break;
         }
         busquedaListaMarca = nextList(busquedaMarca->lista);
@@ -196,7 +196,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
-          busquedaListaTipo->stock += cantDisp;
+          //busquedaListaTipo->stock += cantDisp;
           break;
         }
         busquedaListaTipo = nextList(busquedaTipo->lista);
