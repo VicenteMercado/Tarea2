@@ -353,8 +353,6 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
     prod = nextMap(productosPorNombre);
   }
 
-  //FALTA PROCESAR ELIMINACIÓN DE STOCK Y ELIMINAR CARRITO!!!
-
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
   while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
