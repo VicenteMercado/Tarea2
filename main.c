@@ -334,16 +334,16 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
                 revisarCarrito->listaDeCarrito->lista  = createList();
                 pushBack(listaCarritos, revisarCarrito ); 
         }
-    if (!firstList(revisarCarrito->listaDeCarrito))
+    if (!firstList(revisarCarrito->listaDeCarrito->lista))
         {
-                pushFront(revisarCarrito->listaDeCarrito, producto);
+                pushFront(revisarCarrito->listaDeCarrito->lista, producto);
                 printf("Su producto ha sido agregado a su carrito de compra\n");
                 revisarCarrito->listaDeCarrito->cantidadElementos++;
                 return;
         }
     else
     {
-      pushBack(revisarCarrito->listaDeCarrito, producto);
+      pushBack(revisarCarrito->listaDeCarrito->lista, producto);
       printf("Su producto ha sido agregado a su carrito de compra\n");
       revisarCarrito->listaDeCarrito->cantidadElementos++;
       return;
