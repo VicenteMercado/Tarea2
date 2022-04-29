@@ -447,8 +447,7 @@ void mostrarCarritosCompra(List * listaCarritos)
        }
        printf("La cantidad de productos que tiene el carrito %s es: %d\n", carrito->nombre, cant);
        carrito=nextList(listaCarritos);
-     }            
-                       
+     }                                  
 }
 
 
@@ -534,7 +533,7 @@ int main(){
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
                    scanf("%100[^\n]s", carrito);
-                   printf("el carrito se llama %s \n", carrito);
+                   //printf("el carrito se llama %s \n", carrito);
                    while(nombreProducto[0] != '0')
                    {
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
@@ -546,6 +545,9 @@ int main(){
                       scanf("%d", &cantidadCompra);
                       agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos);
                    }
+                   nombreProducto[0] = '1';
+                    printf("el carrito se llama %s \n", carrito);
+
                    break;
            case 9: printf("FUNCION NO IMPLEMENTADA!\n");
                    break;
