@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "Map.h"
 #include "list.h"
 
@@ -132,6 +133,8 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
 void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio, Map* prodPorNombre, Map* prodPorTipo, Map* prodPorMarca)
 {
   tipoProducto* productoNuevo = (tipoProducto *) malloc (sizeof(tipoProducto));
+
+  nomProd[0] = toupper(nomProd[0]);
 
   strcpy(productoNuevo->nombre, nomProd);
   strcpy(productoNuevo->marca, nomMarca);
