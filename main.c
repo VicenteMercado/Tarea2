@@ -293,11 +293,23 @@ void BuscarMarca (char* marca, Map* prodPorMarca)
   }
 }
 
-void BuscarNombre (char* nomProd, Map* prodPornombre)
+void BuscarNombre (char* nombre, Map* prodPornombre)
 {
-  bool prodEncontrado = false;
+  tipoProducto* producto = searchMap(prodPornombre, nombre);
+  if (producto != NULL)
+  {
+    //se encontró un producto con este nombre, por lo que se muestran los datos del producto 
+    printf("%s, ", producto->nombre);
+    printf("%s, ", producto->marca);
+    printf("%s, ", producto->tipo);
+    printf("%d, ", producto->stock);
+    printf("%d\n", producto->precio);
+  }
+  else
+  {
+    printf("No se ha encontrado el producto con el nombre ingresado");
+  }
 }
-
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
 {
