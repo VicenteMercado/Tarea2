@@ -26,6 +26,7 @@ typedef struct{
   char nombre[100];
   int cantidad;
   char marca[100];
+  int precio;
 } tipoProductoCarro;
 
 /*
@@ -398,12 +399,17 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
   
 }
 
-void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos){
+void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos, Map* prodPorNombre){
  
     tipoProductoCarro*  producto =(tipoProductoCarro*) malloc (sizeof(tipoProductoCarro));
     strcpy(producto->nombre, nomProd);
     producto->cantidad= cant;
     tipoLista* revisarCarrito = firstList(listaCarritos);
+    tipoProducto* buscadorProducto = searchMap(prodPorNombre, nomProd);
+    printf("el precio es %d\n ",buscadorProducto->precio);
+    producto->precio = buscadorProducto->precio;
+    printf(" se guardo el precio ? %d", producto->precio);
+
      while (revisarCarrito != NULL)
         {
           if (strcmp(revisarCarrito->nombre, nomCarrito) == 0)
@@ -620,7 +626,7 @@ int main(){
                       printf("Ingrese la cantidad que desea de %s ", nombreProducto);
                       getchar();
                       scanf("%d", &cantidadCompra);
-                      agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos);
+                      agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos, productosPorNombre);
                    }
                    nombreProducto[0] = '1';
                     printf("el carrito se llama %s \n", carrito);
