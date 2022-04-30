@@ -387,7 +387,7 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
   }
 
   if (carrito == NULL){ //Si no se encontró el carrito nomCarrito, se imprime un mensaje referente y se devuelve al menú.
-    printf("No existe el carrito de dicho nombre!\n\n");
+    printf("\nNo existe el carrito de dicho nombre!\n\n");
     return;
   }
 
@@ -626,7 +626,10 @@ int main(){
                     printf("el carrito se llama %s \n", carrito);
 
                    break;
-           case 9: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 9: printf("Por favor, ingrese el nombre de su carrito: ");
+                   getchar();
+                   scanf("%100[^\n]s", carrito);
+                   eliminarProdCarrito(carrito, productosPorNombre, listaCarritos);
                    break;
            case 10: printf("Por favor, ingrese el nombre de su carrito: ");
                     getchar();
