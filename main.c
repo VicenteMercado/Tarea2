@@ -235,24 +235,26 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
 }
 
-void BuscarTipo (char* nomTipo, Map* prodPorNombre)
+void BuscarTipo (char* tipo, Map* prodPorTipo)
 {
-  //marcador de si hay un producto encontrado 
+   //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
-  tipoProducto* producto = firstMap(prodPorNombre);
-  while (producto != NULL)
+  tipoLista* listaProductos = searchMap(prodPorTipo, tipo);
+  if (listaProductos != NULL)
   {
-    if (strcmp(nomTipo, producto->tipo) == 0)
+    //se encontró una lista de productos de esta marca 
+    prodEncontrado = true;
+    tipoProducto* producto = firstList(listaProductos->lista);
+    while(producto != NULL)
     {
-      //se encontró un producto de ese tipo
-      printf("%s\n", producto->nombre);
-      printf("%s\n", producto->marca);
-      printf("%s\n", producto->tipo);
-      printf("%d\n", producto->stock);
+      //se muestran los datos del producto 
+      printf("%s, ", producto->nombre);
+      printf("%s, ", producto->marca);
+      printf("%s, ", producto->tipo);
+      printf("%d, ", producto->stock);
       printf("%d\n", producto->precio);
-      prodEncontrado = true;
+      producto = nextList(listaProductos->lista);
     }
-    producto = nextMap(prodPorNombre);
   }
 
   //de no existir el tipo debe mostrar un mensaje por pantalla 
