@@ -262,9 +262,33 @@ void BuscarTipo (char* nomTipo, Map* prodPorNombre)
   }
 }
 
-void BuscarMarca (char* nomMarca, Map* prodPorMarca)
+void BuscarMarca (char* marca, Map* prodPorMarca)
 {
+  //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
+  tipoLista* listaProductos = searchMap(prodPorMarca, marca);
+  if (listaProductos != NULL)
+  {
+    //se encontró una lista de productos de esta marca 
+    prodEncontrado = true;
+    tipoProducto* producto = firstList(listaProductos->lista);
+    while(producto != NULL)
+    {
+      //se muestran los datos del producto 
+      printf("%s, ", producto->nombre);
+      printf("%s, ", producto->marca);
+      printf("%s, ", producto->tipo);
+      printf("%d, ", producto->stock);
+      printf("%d\n", producto->precio);
+      producto = nextList(listaProductos->lista);
+    }
+  }
+
+  //de no existir la marca debe mostrar un mensaje por pantalla 
+  if (prodEncontrado == false)
+  {
+    printf("No existe esta marca de producto");
+  }
 }
 
 void BuscarNombre (char* nomProd, Map* prodPornombre)
