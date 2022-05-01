@@ -477,7 +477,7 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   //Comienza procesamiento de carrito.
 
   int totalPago = 0; //Variable que almacena el total a pagar por carrito.
-  tipoProducto* prod = firstList(carrito->lista); //Ayudará a recorrer los productos del carrito.
+  tipoProductoCarro* prod = firstList(carrito->lista); //Ayudará a recorrer los productos del carrito.
 
   while(prod != NULL){ //Se van sumando los precios de todos los productos.
     totalPago += prod->precio;
