@@ -137,6 +137,8 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   tipoProducto* productoNuevo = (tipoProducto *) malloc (sizeof(tipoProducto));
 
   nomProd[0] = toupper(nomProd[0]);
+  nomMarca[0] = toupper(nomMarca[0]);
+  nomTipo[0] = toupper(nomTipo[0]);
 
   strcpy(productoNuevo->nombre, nomProd);
   strcpy(productoNuevo->marca, nomMarca);
@@ -145,7 +147,9 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   productoNuevo->precio = precio;
 
   tipoLista* nuevaMarca;
+  bool crearNuevaMarca = false;
   tipoLista* nuevoTipo;
+  bool crearNuevoTipo = false;
 
   tipoProducto* busquedaNombre = firstMap(prodPorNombre);
   tipoLista* busquedaMarca = firstMap(prodPorMarca);
@@ -167,12 +171,14 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   {
     if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0)
     {
+      crearNuevaMarca = true;
+      nuevaMarca = busquedaMarca;
       busquedaListaMarca = firstList(busquedaMarca->lista);
       while (busquedaListaMarca != NULL)
       {
         if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
         {
-          //busquedaListaMarca->stock += cantDisp;
+          busquedaListaMarca->stock = busquedaNombre->stock;
           break;
         }
         busquedaListaMarca = nextList(busquedaMarca->lista);
@@ -181,7 +187,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     busquedaMarca = nextMap(prodPorMarca);
   }
 
-  if (busquedaMarca == NULL)
+  if (crearNuevaMarca == false)
   {
     nuevaMarca = (tipoLista *) malloc (sizeof(tipoLista));
     nuevaMarca->lista = createList();
@@ -193,12 +199,14 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   {
     if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
     {
+      crearNuevoTipo = true;
+      nuevoTipo = busquedaTipo;
       busquedaListaTipo = firstList(busquedaTipo->lista);
       while (busquedaListaTipo != NULL)
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
-          //busquedaListaTipo->stock += cantDisp;
+          busquedaListaTipo->stock = busquedaNombre->stock;
           break;
         }
         busquedaListaTipo = nextList(busquedaTipo->lista);
@@ -207,7 +215,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     busquedaTipo = nextMap(prodPorTipo);
   }
 
-  if (busquedaTipo == NULL)
+  if (crearNuevoTipo == false)
   {
     nuevoTipo = (tipoLista *) malloc (sizeof(tipoLista));
     nuevoTipo->lista = createList();
@@ -222,18 +230,19 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
   }
 
   insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
-  if (busquedaMarca != NULL && busquedaTipo != NULL)
+
+  if (crearNuevaMarca == true && crearNuevoTipo == true)
   {
-    pushBack(busquedaMarca->lista, productoNuevo);
-    pushBack(busquedaTipo->lista, productoNuevo);
+    pushBack(nuevoTipo->lista, productoNuevo);
+    pushBack(nuevaMarca->lista, productoNuevo);
     printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
     return;
   }
 
-  pushFront(nuevaMarca->lista, productoNuevo);
-  pushFront(nuevoTipo->lista, productoNuevo);
-
+  pushBack(nuevaMarca->lista, productoNuevo);
+  pushBack(nuevoTipo->lista, productoNuevo);
   printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
+
 }
 
 void BuscarTipo (char* tipo, Map* prodPorTipo)
@@ -305,10 +314,12 @@ void BuscarNombre (char* nombre, Map* prodPornombre)
     printf("%s, ", producto->tipo);
     printf("%d, ", producto->stock);
     printf("%d\n", producto->precio);
+    return;
   }
   else
   {
     printf("No se ha encontrado el producto con el nombre ingresado");
+    return;
   }
 }
 
@@ -345,10 +356,6 @@ void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarc
 
   printf("Todos los datos han sido copiados o el stock ha sido modificado\n");
   fclose(archivoProductos);
-}
-
-void muestraProductosTipo(char* nomTipo){
-
 }
 
 void muestraTodosProductos(Map* prodPorNombre){ //CASE 7
@@ -538,8 +545,7 @@ void mostrarCarritosCompra(List * listaCarritos)
 int main(){
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
     setSortFunction(productosPorNombre,lower_than_string);
-    Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo (Pensaba en dividir los tipos
-                                                     //por números, no sé si se les ocurre algo más)
+    Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo
     setSortFunction(productosPorTipo,lower_than_string);
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
     setSortFunction(productosPorMarca,lower_than_string);
