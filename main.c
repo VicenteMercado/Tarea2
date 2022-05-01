@@ -314,12 +314,11 @@ void BuscarNombre (char* nombre, Map* prodPornombre)
     printf("%s, ", producto->tipo);
     printf("%d, ", producto->stock);
     printf("%d\n", producto->precio);
-    return;
   }
   else
   {
+    //en caso de no haber encontrado el producto, mostrar un mensaje por pantalla
     printf("No se ha encontrado el producto con el nombre ingresado");
-    return;
   }
 }
 
