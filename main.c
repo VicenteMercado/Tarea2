@@ -401,7 +401,7 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
   //Comienza proceso de eliminación de producto
 
   popBack(carrito->lista);
-  printf("\nEl último producto ingresado en el carrito %s ha sido eliminado correctamente\n", nomCarrito);
+  printf("\nEl ultimo producto ingresado en el carrito %s ha sido eliminado correctamente\n", nomCarrito);
   
 }
 
@@ -412,15 +412,12 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
     producto->cantidad= cant;
     tipoLista* revisarCarrito = firstList(listaCarritos);
     tipoProducto* buscadorProducto = searchMap(prodPorNombre, nomProd);
-    printf("el precio es %d\n ",buscadorProducto->precio);
     producto->precio = buscadorProducto->precio;
-    printf(" se guardo el precio ? %d", producto->precio);
 
      while (revisarCarrito != NULL)
         {
           if (strcmp(revisarCarrito->nombre, nomCarrito) == 0)
           {
-            printf("el nombre del carro es %s\n", revisarCarrito->nombre );
                   break;
           }
           else
@@ -483,10 +480,10 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   //Comienza procesamiento de carrito.
 
   int totalPago = 0; //Variable que almacena el total a pagar por carrito.
-  tipoProducto* prod = firstList(carrito->lista); //Ayudará a recorrer los productos del carrito.
+  tipoProductoCarro* prod = firstList(carrito->lista); //Ayudará a recorrer los productos del carrito.
 
   while(prod != NULL){ //Se van sumando los precios de todos los productos.
-    totalPago += prod->precio;
+    totalPago += prod->precio * prod->cantidad;
     prod = nextList(carrito->lista);
   }
 
@@ -496,15 +493,30 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
                                        // y precios de cada producto.
 
   while(prod != NULL){ //Se imprimen productos uno por uno.
-    printf("%s - $%d\n", prod->nombre, prod->precio);
+    printf("%s - $%d (%d unidades)\n", prod->nombre, prod->precio, prod->cantidad);
     prod = nextList(carrito->lista);
   }
 
+  prod = firstList(carrito->lista); //prod se devuelve a la primera posición una vez más,
+                                    //ahora para reducir el stock de los productos correspondientes
+
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
-  while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
-      busquedaNombre->stock--; //FALTA CASO CUANDO CANT > 1
-      busquedaNombre = nextMap(productosPorNombre);
+  while (prod != NULL){ //Se elimina stock correspondiente de cada producto.
+      busquedaNombre = firstMap(productosPorNombre);
+      while(busquedaNombre != NULL){
+        if(strcmp(prod->nombre,busquedaNombre->nombre)==0){
+          printf("\nProducto %s tiene %d unidades disponibles, ", prod->nombre, busquedaNombre->stock);
+          if(busquedaNombre->stock < prod->cantidad){
+            printf("ERROR!\nno existe stock disponible para su compra.");
+            exit(EXIT_FAILURE);
+          }
+          busquedaNombre->stock -= prod->cantidad;
+          printf("tras la compra quedan %d unidades.", busquedaNombre->stock);
+        }
+        busquedaNombre = nextMap(productosPorNombre);  
+      }
+    prod = nextList(carrito->lista);
   }
 
   tipoLista* posCarrito = firstList(listaCarritos); //Variable para la posición del carrito en la lista
@@ -515,6 +527,8 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
       posCarrito = nextList(listaCarritos);
     }
   }
+
+  printf("\nMuchas gracias por tu compra!\n\n");
 
   popCurrent(listaCarritos); //Se elimina el carrito.
 }
