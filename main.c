@@ -383,19 +383,19 @@ void muestraTodosProductos(Map* prodPorNombre){ //CASE 7
   printf("\n"); //Se empieza con salto de línea para mejor distinción.
   tipoProducto* prodActual = firstMap(prodPorNombre); //Ayudará a recorrer cada producto.
 
-  if(!prodActual){
+  if(!prodActual){ //Si no existe ni un sólo producto en el sistema, se avisa al usuario y se retorna al menú.
     printf("No hay productos existentes!\n\n");
     return;
   }
   
-  while(prodActual != NULL){
+  while(prodActual != NULL){ //Proceso de recorrer los productos en el sistema.
      printf("Nombre del producto: %s\n", prodActual->nombre); 
      printf("Marca: %s\n", prodActual->marca);
      printf("Tipo: %s\n", prodActual->tipo); 
      printf("Stock: %d\n", prodActual->stock); 
      printf("Precio: $%d\n", prodActual->precio); 
 
-     prodActual = nextMap(prodPorNombre);
+     prodActual = nextMap(prodPorNombre); //Mostradas las variables requeridas de un producto, se pasa al siguiente.
   }
 
 }
@@ -422,7 +422,7 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
 
   //Comienza proceso de eliminación de producto
 
-  popBack(carrito->lista);
+  popBack(carrito->lista); //Como la lista del carrito está ordenada, se elimina la última posición directamente.
   printf("\nEl ultimo producto ingresado en el carrito %s ha sido eliminado correctamente\n", nomCarrito);
   
 }
@@ -525,26 +525,26 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
   while (prod != NULL){ //Se elimina stock correspondiente de cada producto.
-      busquedaNombre = firstMap(productosPorNombre);
+      busquedaNombre = firstMap(productosPorNombre); //Se pone en primera posición a busquedaNombre tras completar su recorrido.
       while(busquedaNombre != NULL){
         if(strcmp(prod->nombre,busquedaNombre->nombre)==0){
           printf("\nProducto %s tiene %d unidades disponibles, ", prod->nombre, busquedaNombre->stock);
-          if(busquedaNombre->stock < prod->cantidad){
+          if(busquedaNombre->stock < prod->cantidad){ //Si la cantidad deseada supera a la disponible, se tira error y se cierra el programa.
             printf("ERROR!\nno existe stock disponible para su compra.");
             exit(EXIT_FAILURE);
           }
-          busquedaNombre->stock -= prod->cantidad;
+          busquedaNombre->stock -= prod->cantidad; //De lo contrario, se quita la cantidad correspondiente.
           printf("tras la compra quedan %d unidades.", busquedaNombre->stock);
         }
         busquedaNombre = nextMap(productosPorNombre);  
       }
-    prod = nextList(carrito->lista);
+    prod = nextList(carrito->lista); //Terminado de recorrer los productos, se va al siguiente producto del carrito.
   }
 
   tipoLista* posCarrito = firstList(listaCarritos); //Variable para la posición del carrito en la lista
 
   while(posCarrito != NULL){  //Se recupera la posición del carrito
-    if(strcmp(posCarrito->nombre, carrito->nombre)==0) break;
+    if(strcmp(posCarrito->nombre, carrito->nombre)==0) break; //Si los nombres coinciden, ya fue encontrado.
     else{
       posCarrito = nextList(listaCarritos);
     }
