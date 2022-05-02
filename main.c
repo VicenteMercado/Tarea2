@@ -264,6 +264,7 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
 
 void BuscarTipo (char* tipo, Map* prodPorTipo)
 {
+  tipo[0] = toupper(tipo[0]);
    //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
   tipoLista* listaProductos = searchMap(prodPorTipo, tipo);
@@ -293,6 +294,7 @@ void BuscarTipo (char* tipo, Map* prodPorTipo)
 
 void BuscarMarca (char* marca, Map* prodPorMarca)
 {
+  marca[0] = toupper(marca[0]);
   //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
   tipoLista* listaProductos = searchMap(prodPorMarca, marca);
@@ -322,6 +324,7 @@ void BuscarMarca (char* marca, Map* prodPorMarca)
 
 void BuscarNombre (char* nombre, Map* prodPornombre)
 {
+  nombre[0] = toupper(nombre[0]);
   tipoProducto* producto = searchMap(prodPornombre, nombre);
   if (producto != NULL)
   {
@@ -580,11 +583,11 @@ void mostrarCarritosCompra(List * listaCarritos)
 int main(){
     //Inicialización de variables
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
-    setSortFunction(productosPorNombre,lower_than_string);
+    setSortFunction(productosPorNombre,lower_than_string); //Se ordena el mapa alfabéticamente
     Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo
-    setSortFunction(productosPorTipo,lower_than_string);
+    setSortFunction(productosPorTipo,lower_than_string); //Se ordena el mapa alfabéticamente
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
-    setSortFunction(productosPorMarca,lower_than_string);
+    setSortFunction(productosPorMarca,lower_than_string); //Se ordena el mapa alfabéticamente
     List* listaCarritos = createList(); //Lista global de carritos.
 
     char *nombreProducto = (char*) malloc (100*sizeof(char));
@@ -669,7 +672,7 @@ int main(){
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
                    scanf("%100[^\n]s", carrito);
-                   //printf("el carrito se llama %s \n", carrito);
+                   //Mientras el usuario no ingrese 0, el while continuará pidiendo los datos correspondientes
                    while(nombreProducto[0] != '0')
                    {
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
@@ -682,7 +685,6 @@ int main(){
                       agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos, productosPorNombre);
                    }
                    nombreProducto[0] = '1';
-                   printf("el carrito se llama %s \n", carrito);
                    break;
            case 9: printf("Por favor, ingrese el nombre de su carrito: ");
                    getchar();
