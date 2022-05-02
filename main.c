@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "list.h"
 
+//Struct que guarda los datos de cada producto
 typedef struct
 {
   char nombre[100];
@@ -15,6 +16,7 @@ typedef struct
   int precio;
 } tipoProducto;
 
+//Struct que guarda una lista, y un nombre que la puede acompañar
 typedef struct
 {
   List* lista;
@@ -22,6 +24,7 @@ typedef struct
   int cantidadElementos;
 } tipoLista;
 
+//Struct utilizado principalmente en las funciones relacionadas con el carrito. Contienen los datos necesarios de un producto para estas funciones
 typedef struct{
   char nombre[100];
   int cantidad;
@@ -65,6 +68,7 @@ int lower_than_int(void * key1, void * key2) {
     return 0;
 }
 
+//Función que recibe campos de un archivo CSV separado por comas.
 char *get_csv_field (char * tmp, int k) {
     int open_mark = 0;
     char* ret=(char*) malloc (100*sizeof(char));
@@ -134,71 +138,89 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
 
 void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp, int precio, Map* prodPorNombre, Map* prodPorTipo, Map* prodPorMarca)
 {
+  //Se reserva memoria para guardar los datos del producto
   tipoProducto* productoNuevo = (tipoProducto *) malloc (sizeof(tipoProducto));
 
+  //Con tal de solventar una falla con la función sortMap, cada variable string comienza con mayúsculas
   nomProd[0] = toupper(nomProd[0]);
+  nomMarca[0] = toupper(nomMarca[0]);
+  nomTipo[0] = toupper(nomTipo[0]);
 
+  //Se guardan los datos del productos con todo lo recibido por la función
   strcpy(productoNuevo->nombre, nomProd);
   strcpy(productoNuevo->marca, nomMarca);
   strcpy(productoNuevo->tipo, nomTipo);
   productoNuevo->stock = cantDisp;
   productoNuevo->precio = precio;
 
-  tipoLista* nuevaMarca;
-  tipoLista* nuevoTipo;
+  tipoLista* nuevaMarca; //Variable que guardará la marca a la que pertenece el producto
+  bool crearNuevaMarca = false; //Valor bool que señalará si es necesario crear una nueva marca si no existe
+  tipoLista* nuevoTipo; //Variable que guardará el tipo al que pertenece el producto
+  bool crearNuevoTipo = false; //Valor bool que señalará si es necesario crear un nuevo tipo si no existe
 
+  //Variables de búsqueda en los mapas y listas utilizados
   tipoProducto* busquedaNombre = firstMap(prodPorNombre);
   tipoLista* busquedaMarca = firstMap(prodPorMarca);
   tipoProducto* busquedaListaMarca;
   tipoProducto* busquedaListaTipo;
   tipoLista* busquedaTipo = firstMap(prodPorTipo);
 
+  //Si el primero del mapa de productos por nombres no es NULL, se entra a este while, que buscará si ya existe el producto.
+  //Como punto importante, cabe señalar que, si el producto ya se encuentra en este mapa, estará en todos los demás, debido a la naturaleza del programa.
   while (busquedaNombre != NULL)
   {
-    if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0) //Que ya esté en el nombre, significa que ya va a estar en los demás
+    if (strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0) //Se comparan los nombres de busquedaNombre y productoNuevo
     {
-      busquedaNombre->stock += cantDisp;
+      busquedaNombre->stock += cantDisp; //Si es así, se actualiza el stock del producto
       break;
     }
-    busquedaNombre = nextMap(prodPorNombre);
+    busquedaNombre = nextMap(prodPorNombre); //Si no, se sigue avanzando por el mapa hasta que busquedaNombre sea igual a NULL
   }
 
+  //Mismo procedimiento, pero en este caso para las marcas. A diferencia de los nombres, este mapa guarda a su vez listas, por lo que es
+  //necesario hacer una búsqueda tanto en el mapa, como en la lista de la marca encontrada.
   while (busquedaMarca != NULL)
   {
-    if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0)
+    if (strcmp(busquedaMarca->nombre, productoNuevo->marca) == 0) //Se comparan las marcas
     {
-      busquedaListaMarca = firstList(busquedaMarca->lista);
+      crearNuevaMarca = true; //Así, si se ve que la marca ya existe, "crearNuevaMarca" es igual a verdadero, lo que señala que no es necesario crearla.
+      nuevaMarca = busquedaMarca; //la variable "busquedaMarca" se guarda en "nuevaMarca" para que el valor proveído no se pierda
+      busquedaListaMarca = firstList(busquedaMarca->lista); //Se comienza a buscar en la lista de la marca señalada
       while (busquedaListaMarca != NULL)
       {
-        if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0)
+        if (strcmp(busquedaListaMarca->nombre, productoNuevo->nombre) == 0) //Se comparan los nombres de los productos
         {
-          //busquedaListaMarca->stock += cantDisp;
+          busquedaListaMarca->stock = busquedaNombre->stock; //Al estar apuntando a un mismo puntero, solo se iguala el stock de busquedaListaMarca al de busquedaNombre
           break;
         }
-        busquedaListaMarca = nextList(busquedaMarca->lista);
+        busquedaListaMarca = nextList(busquedaMarca->lista); //Se avanza en la lista
       }
     }
-    busquedaMarca = nextMap(prodPorMarca);
+    busquedaMarca = nextMap(prodPorMarca); //Se avanza en la marca
   }
 
-  if (busquedaMarca == NULL)
+  //Si luego del while, crearNuevaMarca es igual a falso, el programa sabe que debe crear una nueva marca.
+  if (crearNuevaMarca == false)
   {
-    nuevaMarca = (tipoLista *) malloc (sizeof(tipoLista));
-    nuevaMarca->lista = createList();
-    strcpy(nuevaMarca->nombre, nomMarca);
-    insertMap(prodPorMarca, nuevaMarca->nombre, nuevaMarca);
+    nuevaMarca = (tipoLista *) malloc (sizeof(tipoLista)); //Reserva de memoria
+    nuevaMarca->lista = createList(); //Se crea la lista del struct
+    strcpy(nuevaMarca->nombre, nomMarca); //Se copia el nombre de la marca en este struct
+    insertMap(prodPorMarca, nuevaMarca->nombre, nuevaMarca); //Al ser una nueva marca, se inserta en su mapa correspondiente
   }
 
+  //Se repite el procedimiento anterior, pero para los tipos de productos.
   while (busquedaTipo != NULL)
   {
     if (strcmp(busquedaTipo->nombre, productoNuevo->tipo) == 0)
     {
+      crearNuevoTipo = true;
+      nuevoTipo = busquedaTipo;
       busquedaListaTipo = firstList(busquedaTipo->lista);
       while (busquedaListaTipo != NULL)
       {
         if (strcmp(busquedaListaTipo->nombre, productoNuevo->nombre) == 0)
         {
-          //busquedaListaTipo->stock += cantDisp;
+          busquedaListaTipo->stock = busquedaNombre->stock;
           break;
         }
         busquedaListaTipo = nextList(busquedaTipo->lista);
@@ -207,7 +229,8 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     busquedaTipo = nextMap(prodPorTipo);
   }
 
-  if (busquedaTipo == NULL)
+  //Igual que con las marcas, si la variable "crearNuevoTipo" es falsa, es necesario crearlo e insertarlo en el mapa.
+  if (crearNuevoTipo == false)
   {
     nuevoTipo = (tipoLista *) malloc (sizeof(tipoLista));
     nuevoTipo->lista = createList();
@@ -215,29 +238,33 @@ void agregarProducto(char* nomProd, char* nomMarca, char* nomTipo, int cantDisp,
     insertMap(prodPorTipo, nuevoTipo->nombre, nuevoTipo);
   }
 
+  //Si el producto ya existía y lo único que se hizo fue actualizar su stock, el programa le señala esto al usuario y finaliza la función
   if (busquedaNombre != NULL && strcmp(busquedaNombre->nombre, productoNuevo->nombre) == 0)
   {
     printf("Stock de %s actualizado\n", busquedaNombre->nombre);
     return;
   }
 
-  insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo);
-  if (busquedaMarca != NULL && busquedaTipo != NULL)
+  insertMap(prodPorNombre, productoNuevo->nombre, productoNuevo); //Se inserta en el mapa de nombres el nuevo producto
+
+  //Si se ve que las marcas ya existían, se ingresa a este if que añade los productos a sus listas.
+  if (crearNuevaMarca == true && crearNuevoTipo == true)
   {
-    pushBack(busquedaMarca->lista, productoNuevo);
-    pushBack(busquedaTipo->lista, productoNuevo);
+    pushBack(nuevoTipo->lista, productoNuevo);
+    pushBack(nuevaMarca->lista, productoNuevo);
     printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
     return;
   }
 
-  pushFront(nuevaMarca->lista, productoNuevo);
-  pushFront(nuevoTipo->lista, productoNuevo);
-
+  //Si no, se realiza lo mismo, pero si las marcas fueron creadas durante la ejecución de la función
+  pushBack(nuevaMarca->lista, productoNuevo);
+  pushBack(nuevoTipo->lista, productoNuevo);
   printf("%s fue agregado al catalogo\n", productoNuevo->nombre);
 }
 
 void BuscarTipo (char* tipo, Map* prodPorTipo)
 {
+  tipo[0] = toupper(tipo[0]);
    //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
   tipoLista* listaProductos = searchMap(prodPorTipo, tipo);
@@ -267,6 +294,7 @@ void BuscarTipo (char* tipo, Map* prodPorTipo)
 
 void BuscarMarca (char* marca, Map* prodPorMarca)
 {
+  marca[0] = toupper(marca[0]);
   //marcador de si hay un producto encontrado 
   bool prodEncontrado = false;
   tipoLista* listaProductos = searchMap(prodPorMarca, marca);
@@ -296,6 +324,7 @@ void BuscarMarca (char* marca, Map* prodPorMarca)
 
 void BuscarNombre (char* nombre, Map* prodPornombre)
 {
+  nombre[0] = toupper(nombre[0]);
   tipoProducto* producto = searchMap(prodPornombre, nombre);
   if (producto != NULL)
   {
@@ -308,32 +337,38 @@ void BuscarNombre (char* nombre, Map* prodPornombre)
   }
   else
   {
+    //en caso de no haber encontrado el producto, mostrar un mensaje por pantalla
     printf("No se ha encontrado el producto con el nombre ingresado");
   }
 }
 
 void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarca, Map* prodPorTipo)
 {
-  FILE *archivoProductos = fopen(nombreArchivo, "rt");
+  FILE *archivoProductos = fopen(nombreArchivo, "rt"); //Se busca y abre el archivo indicado por el usuario.
   if (archivoProductos == NULL)
   {
     //Si no se haya el archivo, se avisa al usuario y se regresa al menú.    
     printf("\nArchivo no encontrado!\n");
     return;
   }
-  printf("Su archivo se ha abierto correctamente!\n");
+  printf("Su archivo se ha abierto correctamente!\n"); //se le informa al usuario que que el archivo fue encontrado y fue abierto con éxito
 
+  //Se inicializan variables a utilizar en la funcion get_csv_field
   char linea[1024];
   int i;
   int k = 0;
 
+  //Para este while, se empieza desde la primera línea del archivo, hasta que llegue al final.
   while (fgets(linea, 1023, archivoProductos) != NULL)
     {
         for (i = 0; i < 1; i++)
         {
+                //Cada variable será igual a lo devuelto por la función getCSVField
                 char *nombre = get_csv_field(linea, i);
                 char *marca = get_csv_field(linea, i+1);
                 char *tipo = get_csv_field(linea, i+2);
+                //Como stock y precio son recibidas por la función agregar como enteros, estos se convierten a este tipo de dato por medio
+                //de la función atoi.
                 char* stock = get_csv_field(linea, i+3);
                 int stockAEntero = atoi(stock);
                 char* precio = get_csv_field(linea, i+4);
@@ -344,30 +379,26 @@ void importarProductos(char* nombreArchivo, Map* prodPorNombre, Map* prodPorMarc
     }
 
   printf("Todos los datos han sido copiados o el stock ha sido modificado\n");
-  fclose(archivoProductos);
-}
-
-void muestraProductosTipo(char* nomTipo){
-
+  fclose(archivoProductos); //Se importan los productos y se cierra el archivo.
 }
 
 void muestraTodosProductos(Map* prodPorNombre){ //CASE 7
   printf("\n"); //Se empieza con salto de línea para mejor distinción.
   tipoProducto* prodActual = firstMap(prodPorNombre); //Ayudará a recorrer cada producto.
 
-  if(!prodActual){
+  if(!prodActual){ //Si no existe ni un sólo producto en el sistema, se avisa al usuario y se retorna al menú.
     printf("No hay productos existentes!\n\n");
     return;
   }
   
-  while(prodActual != NULL){
+  while(prodActual != NULL){ //Proceso de recorrer los productos en el sistema.
      printf("Nombre del producto: %s\n", prodActual->nombre); 
      printf("Marca: %s\n", prodActual->marca);
      printf("Tipo: %s\n", prodActual->tipo); 
      printf("Stock: %d\n", prodActual->stock); 
      printf("Precio: $%d\n", prodActual->precio); 
 
-     prodActual = nextMap(prodPorNombre);
+     prodActual = nextMap(prodPorNombre); //Mostradas las variables requeridas de un producto, se pasa al siguiente.
   }
 
 }
@@ -394,8 +425,8 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
 
   //Comienza proceso de eliminación de producto
 
-  popBack(carrito->lista);
-  printf("\nEl último producto ingresado en el carrito %s ha sido eliminado correctamente\n", nomCarrito);
+  popBack(carrito->lista); //Como la lista del carrito está ordenada, se elimina la última posición directamente.
+  printf("\nEl ultimo producto ingresado en el carrito %s ha sido eliminado correctamente\n", nomCarrito);
   
 }
 
@@ -406,15 +437,12 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
     producto->cantidad= cant;
     tipoLista* revisarCarrito = firstList(listaCarritos);
     tipoProducto* buscadorProducto = searchMap(prodPorNombre, nomProd);
-    printf("el precio es %d\n ",buscadorProducto->precio);
     producto->precio = buscadorProducto->precio;
-    printf(" se guardo el precio ? %d", producto->precio);
 
      while (revisarCarrito != NULL)
         {
           if (strcmp(revisarCarrito->nombre, nomCarrito) == 0)
           {
-            printf("el nombre del carro es %s\n", revisarCarrito->nombre );
                   break;
           }
           else
@@ -480,7 +508,7 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
   tipoProductoCarro* prod = firstList(carrito->lista); //Ayudará a recorrer los productos del carrito.
 
   while(prod != NULL){ //Se van sumando los precios de todos los productos.
-    totalPago += prod->precio;
+    totalPago += prod->precio * prod->cantidad;
     prod = nextList(carrito->lista);
   }
 
@@ -490,25 +518,42 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
                                        // y precios de cada producto.
 
   while(prod != NULL){ //Se imprimen productos uno por uno.
-    printf("%s - $%d\n", prod->nombre, prod->precio);
+    printf("%s - $%d (%d unidades)\n", prod->nombre, prod->precio, prod->cantidad);
     prod = nextList(carrito->lista);
   }
 
+  prod = firstList(carrito->lista); //prod se devuelve a la primera posición una vez más,
+                                    //ahora para reducir el stock de los productos correspondientes
+
   tipoProducto* busquedaNombre = firstMap(productosPorNombre);
 
-  while (busquedaNombre != NULL){ //Se elimina stock correspondiente de cada producto.
-      busquedaNombre->stock--; //FALTA CASO CUANDO CANT > 1
-      busquedaNombre = nextMap(productosPorNombre);
+  while (prod != NULL){ //Se elimina stock correspondiente de cada producto.
+      busquedaNombre = firstMap(productosPorNombre); //Se pone en primera posición a busquedaNombre tras completar su recorrido.
+      while(busquedaNombre != NULL){
+        if(strcmp(prod->nombre,busquedaNombre->nombre)==0){
+          printf("\nProducto %s tiene %d unidades disponibles, ", prod->nombre, busquedaNombre->stock);
+          if(busquedaNombre->stock < prod->cantidad){ //Si la cantidad deseada supera a la disponible, se tira error y se cierra el programa.
+            printf("ERROR!\nno existe stock disponible para su compra.");
+            exit(EXIT_FAILURE);
+          }
+          busquedaNombre->stock -= prod->cantidad; //De lo contrario, se quita la cantidad correspondiente.
+          printf("tras la compra quedan %d unidades.", busquedaNombre->stock);
+        }
+        busquedaNombre = nextMap(productosPorNombre);  
+      }
+    prod = nextList(carrito->lista); //Terminado de recorrer los productos, se va al siguiente producto del carrito.
   }
 
   tipoLista* posCarrito = firstList(listaCarritos); //Variable para la posición del carrito en la lista
 
   while(posCarrito != NULL){  //Se recupera la posición del carrito
-    if(strcmp(posCarrito->nombre, carrito->nombre)==0) break;
+    if(strcmp(posCarrito->nombre, carrito->nombre)==0) break; //Si los nombres coinciden, ya fue encontrado.
     else{
       posCarrito = nextList(listaCarritos);
     }
   }
+
+  printf("\nMuchas gracias por tu compra!\n\n");
 
   popCurrent(listaCarritos); //Se elimina el carrito.
 }
@@ -536,13 +581,13 @@ void mostrarCarritosCompra(List * listaCarritos)
 
 
 int main(){
+    //Inicialización de variables
     Map* productosPorNombre = createMap(is_equal_string); //Mapa de productos por nombre (String)
-    setSortFunction(productosPorNombre,lower_than_string);
-    Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo (Pensaba en dividir los tipos
-                                                     //por números, no sé si se les ocurre algo más)
-    setSortFunction(productosPorTipo,lower_than_string);
+    setSortFunction(productosPorNombre,lower_than_string); //Se ordena el mapa alfabéticamente
+    Map* productosPorTipo = createMap(is_equal_string); //Mapa de productos por tipo
+    setSortFunction(productosPorTipo,lower_than_string); //Se ordena el mapa alfabéticamente
     Map* productosPorMarca = createMap(is_equal_string); //Mapa de productos por marca (String)
-    setSortFunction(productosPorMarca,lower_than_string);
+    setSortFunction(productosPorMarca,lower_than_string); //Se ordena el mapa alfabéticamente
     List* listaCarritos = createList(); //Lista global de carritos.
 
     char *nombreProducto = (char*) malloc (100*sizeof(char));
@@ -555,6 +600,7 @@ int main(){
     int precio;
     int option;
 
+    //Creación de menú
     while (option != 0)
     {
         printf("******************************************\n");
@@ -605,18 +651,28 @@ int main(){
                    scanf("%d", &precio);
                    agregarProducto(nombreProducto, nombreMarca, tipo, stock, precio, productosPorNombre, productosPorTipo, productosPorMarca);
                    break;
-           case 4: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 4: getchar();
+                   printf("Ingrese el nombre del tipo a buscar: ");
+                   scanf("%100[^\n]s", tipo);
+                   getchar();
+                   BuscarTipo(tipo, productosPorTipo);
                    break;
-           case 5: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 5: getchar();
+                   printf("Ingrese el nombre de la marca a buscar: ");
+                   scanf("%100[^\n]s", nombreMarca);
+                   BuscarMarca(nombreMarca, productosPorMarca);
                    break;
-           case 6: printf("FUNCION NO IMPLEMENTADA!\n");
+           case 6: getchar();
+                   printf("Ingrese el nombre del producto a buscar: ");
+                   scanf("%100[^\n]s", nombreProducto);
+                   BuscarNombre(nombreProducto, productosPorNombre);
                    break;
            case 7: muestraTodosProductos(productosPorNombre);
                    break;
            case 8: getchar();
                    printf("Ingrese el nombre de el carrito\n");
                    scanf("%100[^\n]s", carrito);
-                   //printf("el carrito se llama %s \n", carrito);
+                   //Mientras el usuario no ingrese 0, el while continuará pidiendo los datos correspondientes
                    while(nombreProducto[0] != '0')
                    {
                       printf("Ingrese el nombre del producto que desea ingresar, si su carrito se encuentra listo, escriba un 0\n");
@@ -629,8 +685,6 @@ int main(){
                       agregaProductoCarrito(nombreProducto, cantidadCompra, carrito, listaCarritos, productosPorNombre);
                    }
                    nombreProducto[0] = '1';
-                    printf("el carrito se llama %s \n", carrito);
-
                    break;
            case 9: printf("Por favor, ingrese el nombre de su carrito: ");
                    getchar();
