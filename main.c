@@ -110,15 +110,16 @@ char *get_csv_field (char * tmp, int k) {
 
 void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
 {
-  FILE *archivoProductos = fopen(nombreArchivo, "wt");
+  FILE *archivoProductos = fopen(nombreArchivo, "wt"); //Se abre el archivo en modo escritura
   if (archivoProductos == NULL)
     {
       return;
     }
   tipoProducto* producto;
-  producto = firstMap(mapa_nombres);
+  producto = firstMap(mapa_nombres); //accedo al primer producto con sus respectivos datos
   while(producto != NULL)
   {
+      //Copio el contenido de cada producto en el archivo
       fputs(producto->nombre, archivoProductos);
       fputc(',', archivoProductos);
       fputs(producto->marca, archivoProductos);
@@ -131,7 +132,7 @@ void exportarProductos(char* nombreArchivo, Map* mapa_nombres)
       fputc('\n', archivoProductos);
       producto=nextMap(mapa_nombres);
   }  
-  fclose(archivoProductos);
+  fclose(archivoProductos); //cierro el archivo
 
 }
 
@@ -433,12 +434,12 @@ void eliminarProdCarrito(char* nomCarrito, Map* prodPorNombre, List* listaCarrit
 void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* listaCarritos, Map* prodPorNombre){
  
     tipoProductoCarro*  producto =(tipoProductoCarro*) malloc (sizeof(tipoProductoCarro));
-    strcpy(producto->nombre, nomProd);
-    producto->cantidad= cant;
-    tipoLista* revisarCarrito = firstList(listaCarritos);
-    tipoProducto* buscadorProducto = searchMap(prodPorNombre, nomProd);
-    producto->precio = buscadorProducto->precio;
-
+    strcpy(producto->nombre, nomProd); //se copia el nombre en la variable "producto" que será ingresada en el carro
+    producto->cantidad= cant; //se copia la cantidad solicitada por el usuario
+    tipoLista* revisarCarrito = firstList(listaCarritos); // se accede al primer carro de la lista de carritos
+    tipoProducto* buscadorProducto = searchMap(prodPorNombre, nomProd); //se busca el producto ingresado por el usuario
+    producto->precio = buscadorProducto->precio; //se guarda el precio del producto ingresado
+     //Buscamos si existe el carrito
      while (revisarCarrito != NULL)
         {
           if (strcmp(revisarCarrito->nombre, nomCarrito) == 0)
@@ -450,15 +451,15 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
                   revisarCarrito = nextList(listaCarritos);
           }
         }
-    if (revisarCarrito == NULL)
-        {
+    if (revisarCarrito == NULL) //si el carrito no existe, se crea
+        {     
                 revisarCarrito  = (tipoLista*) malloc(sizeof(tipoLista));
                 strcpy(revisarCarrito ->nombre, nomCarrito);
                 revisarCarrito->cantidadElementos = 0;
                 revisarCarrito->lista  = createList();
-                pushBack(listaCarritos, revisarCarrito );
+                pushBack(listaCarritos, revisarCarrito ); //se ingresa el nuevo carro a la lista de carritos
         }
-    if (!firstList(revisarCarrito->lista))
+    if (!firstList(revisarCarrito->lista)) //si el carro está vacío, se ingresa el primer producto con pushFront
         {
                 pushFront(revisarCarrito->lista, producto);
                 printf("Su producto ha sido agregado a su carrito de compra\n");
@@ -467,6 +468,7 @@ void agregaProductoCarrito(char* nomProd, int cant, char* nomCarrito, List* list
         }
     else
     {
+      //si el carro ya tiene algún producto dentro, se ingresan los productos con pushBack
       pushBack(revisarCarrito->lista, producto);
       printf("Su producto ha sido agregado a su carrito de compra\n");
       revisarCarrito->cantidadElementos++;
@@ -560,21 +562,21 @@ void concretarCompra(char *nomCarrito, List* listaCarritos, Map* productosPorNom
 
 void mostrarCarritosCompra(List * listaCarritos)
 {
-  tipoLista* carrito = firstList(listaCarritos);
+  tipoLista* carrito = firstList(listaCarritos); //se accede al primer carro de la lista de carritos
    while(carrito != NULL)
      {
-       int cant = 0;
+       int cant = 0; //cuenta la cantidad de productos diferentes que posee el carro
        printf("Nombre del carrito: %s\n", carrito->nombre);
-       tipoProductoCarro * producto = firstList(carrito->lista);
+       tipoProductoCarro * producto = firstList(carrito->lista); //Accedemos al primer producto del carro
        while(producto != NULL)
        {
            printf("%s", producto->nombre);
            printf(" %d \n", producto->cantidad);
            cant++;
-           producto = nextList(carrito->lista);
+           producto = nextList(carrito->lista); //nos movemos ingreando a cada producto del carro
        }
        printf("La cantidad de productos que tiene el carrito %s es: %d\n", carrito->nombre, cant);
-       carrito=nextList(listaCarritos);
+       carrito=nextList(listaCarritos); //se accede al siguiente carrito
      }                                  
 }
 
